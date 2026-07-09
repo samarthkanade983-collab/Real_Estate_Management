@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Create Deal{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+
+    <h5 class="card-heading text-center mb-4">
+        <i class="fas fa-handshake"></i> Create Property Deal
+    </h5>
+
+
+    <div class="card-body bg-white col-md-8 mx-auto">
+
+        <form method="POST">
+
+            <!-- Property Information -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-secondary border-bottom pb-2">Property Information</h6>
+
+                <div class="row">
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Property Title</label>
+                        <input type="text" class="form-control" value="{{ property.title }}" readonly>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" value="{{ property.location }}" readonly>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Listed Price</label>
+                        <input type="text" class="form-control" value="₹{{ property.price }}" readonly>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Property ID</label>
+                        <input type="text" class="form-control" value="{{ property.id }}" readonly>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Broker Information -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-secondary border-bottom pb-2">Broker Details</h6>
+
+                <div class="row">
+
+                    <div class="col-md-8` mb-3">
+                        <label class="form-label">Broker Name</label>
+                        <input type="text" class="form-control" value="{{ broker.name }}">
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Broker Phone</label>
+                        <input type="text" class="form-control" value="{{ broker.phone }}">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Buyer Details -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-secondary border-bottom pb-2">Buyer Information</h6>
+
+                <div class="row">
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Buyer Name</label>
+                        <input type="text" name="buyer_name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Buyer Email</label>
+                        <input type="email" name="buyer_email" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Buyer Phone</label>
+                        <input type="text" name="buyer_phone" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Final Deal Price (₹)</label>
+                        <input type="number" name="final_price" id="final_price" min="1" value="₹{{ '{:,}'.format(property.price) }}" class="form-control" required>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <span>Estimated Commission (2%)</span>
+                <strong id="commissionPreview">₹0</strong>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Deal Notes (Optional)</label>
+                <textarea name="notes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <input type="hidden" name="property_id" value="{{ property.id }}">
+            <input type="hidden" name="broker_id" value="{{ broker.id }}">
+
+            <div class="d-flex gap-2">
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i> Confirm Deal
+                </button>
+
+                <a onclick="window.history.back()" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    const priceInput = document.getElementById("final_price");
+    const commissionPreview = document.getElementById("commissionPreview");
+
+    priceInput.addEventListener("input", function () {
+        let price = parseFloat(this.value) || 0;
+        let commission = price * 0.02;
+        commissionPreview.innerText = "₹" + Math.round(commission).toLocaleString();
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}My Deals{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <h4 class="card-heading text-center mb-4">
+        <i class="fas fa-handshake text-dark"></i> My Deals
+    </h4>
+
+    {% if deals %}
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-hover align-middle">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Property</th>
+                    <th>Buyer</th>
+                    <th>Final Price</th>
+                    <th>Commission</th>
+                    <th>Status</th>
+                    <th width="200">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for deal in deals %}
+
+                <tr>
+
+                    <td>
+                        {{ deal.property.title }} <br>
+                        <small class="text-muted">ID: {{ deal.property_id }}</small>
+                    </td>
+
+                    <td>
+                        {{ deal.buyer_name }} <br>
+                        <small class="text-muted">{{ deal.buyer_phone }}</small>
+                    </td>
+
+                    <td>
+                        ₹{{ "{:,.0f}".format(deal.final_price) }}
+                    </td>
+
+                    <td class="text-success">
+                        ₹{{ "{:,.0f}".format(deal.commission_amount) }}
+                    </td>
+
+                    <td>
+
+                        {% if deal.status == "initiated" %}
+                        <span class="badge bg-warning text-dark">
+                            Under Offer
+                        </span>
+
+                        {% elif deal.status == "completed" %}
+                        <span class="badge bg-success">
+                            Completed
+                        </span>
+
+                        {% elif deal.status == "cancelled" %}
+                        <span class="badge bg-danger">
+                            Cancelled
+                        </span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if deal.status == "initiated" %}
+
+                        <form method="POST"
+                              action="{{ url_for('complete_deal', transaction_id=deal.id) }}"
+                              style="display:inline;">
+
+                            <button class="btn btn-success btn-sm">
+                                <i class="fas fa-check"></i>
+                                Complete
+                            </button>
+
+                        </form>
+
+                        <form method="POST"
+                              action="{{ url_for('cancel_deal', transaction_id=deal.id) }}"
+                              style="display:inline;">
+
+                            <button class="btn btn-danger btn-sm">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+
+                        </form>
+
+                        {% else %}
+
+                        <span class="text-muted">No action</span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-info">
+        No deals found.
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Upload Property{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h2 class="card-heading mb-4">Upload New Property</h2>
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="row g-4">
+                <!-- LEFT SIDE -->
+                <div class="col-lg-6">
+
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Title</label>
+                        <input type="text" name="title" class="form-control value-box" required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="description" class="form-control description-box" rows="4" required></textarea>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Price(₹)</label>
+                        <input type="number" name="price" class="form-control value-box" value="₹{{ '{:,}'.format(property.price) }}" step="1000" min="0" required>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><i class="fas fa-location"></i> Location</label>
+                        <input type="text" name="location" class="form-control value-box" required>
+                    </div>
+
+                    <!-- Registration ID -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><i class="fas fa-id-card"></i> Property Registration ID</label>
+                        <input type="text" name="registration_id" class="form-control value-box" pattern="REG-[0-9]{6}"
+                            placeholder="REG-123456" required>
+                    </div> 
+                    <!-- Owner Phone -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><i class="fas fa-mobile-alt" aria-hidden="true"></i> Owner Phone Number</label>
+                        <input type="tel" name="owner_phone" id="ownerPhone" class="form-control value-box"
+                            pattern="^\d{10}$" placeholder="Enter 10-digit phone number" required>
+                    </div>
+                    <!-- Owner Name -->
+                     <div class="mb-3">
+                        <label class="form-label fw-semibold"><i class=" fas fa-user"></i> Owner Name</label>
+                        <input type="text" name="owner_name" class="form-control value-box" required>
+                     </div>
+                    <!-- Owner Email -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><i class="fas fa-envelope"></i> Owner Email I'd</label>
+
+                        <div class="input-group">
+                            <input type="email" name="owner_email" id="ownerEmail" class="form-control value-box"
+                                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" maxlength="100" placeholder="Enter owner's email" required>
+
+                            <button type="button" class="btn btn-outline-primary mb-2" id="getOtpBtn">
+                                Get OTP
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- OTP Section (Hidden Initially) -->
+                    <div class="mb-3 d-none" id="otpSection">
+                        <label class="form-label fw-semibold">Enter OTP</label>
+
+                        <div class="input-group">
+                            <input type="text" id="otpInput" class="form-control" placeholder="Enter 6-digit OTP"
+                                maxlength="6">
+
+                            <button type="button" class="btn btn-success" id="verifyOtpBtn">
+                                Verify OTP
+                            </button>
+                        </div>
+
+                        <small id="otpMessage" class="text-muted"></small>
+                    </div>
+
+                    <!-- Property Type -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Property Type</label>
+                        <select name="property_type" id="propertyType" class="form-select value-box" required>
+                            <option value="" disabled selected>Select type</option>
+                            <option value="Rental">Rental</option>
+                            <option value="Sale">Sale</option>
+                        </select>
+                    </div>
+
+                    <!-- Rental Fields -->
+                    <div id="rentalFields" class="d-none">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Rental Category</label>
+                            <select name="rental_category" class="form-select value-box">
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="PG-home">PG Home</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Shops">Shops</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Rental Available From</label>
+                            <input type="date" name="rental_available_from" class="form-control value-box">
+                        </div>
+                    </div>
+
+                    <!-- Sale Fields -->
+                    <div id="saleFields" class="d-none">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sale Category</label>
+                            <select name="sale_category" class="form-select value-box">
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Independent-House">Independent House</option>
+                                <option value="Plot">Land Plot</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sale Available From</label>
+                            <input type="date" name="sale_available_from" class="form-control value-box">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div class="col-lg-6">
+
+                    <!-- THUMBNAIL -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Thumbnail Image</label>
+
+                        <div class="upload-wrapper text-center p-4 border rounded-4 position-relative">
+                            <input type="file" name="thumbnail" id="thumbnailInput"
+                                class="position-absolute top-0 start-0 w-100 h-100 opacity-0" accept="image/*" required>
+
+                            <div id="uploadContent">
+                                <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+                                <p class="mt-2 mb-1 fw-semibold">Click to upload thumbnail</p>
+                                <small class="text-muted">PNG, JPG, JPEG</small>
+                            </div>
+
+                            <img id="previewImage" class="img-fluid rounded mt-3 d-none preview-img">
+                        </div>
+                    </div>
+
+                    <!-- GALLERY -->
+                    <div>
+                        <label class="form-label fw-semibold">
+                            Property Gallery Images
+                        </label>
+
+                        <div class="upload-wrapper text-center p-4 border rounded-4"
+                            onclick="document.getElementById('images').click()">
+                            <i class="bi bi-images fs-1 text-success"></i>
+                            <p class="mb-1 fw-semibold">Click to upload images</p>
+                            <small class="text-muted">Multiple images allowed</small>
+                        </div>
+
+                        <input type="file" id="images" name="images" class="d-none" multiple accept="image/*" required>
+
+                        <div id="imagePreview" class="row mt-3 g-2"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" id="submitBtn" class="btn btn-success btn-lg px-5 rounded-pill" disabled>
+                    Upload Property
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+
+{% endblock %}

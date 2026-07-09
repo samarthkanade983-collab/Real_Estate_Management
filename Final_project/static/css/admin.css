@@ -1,0 +1,46 @@
+.form-control{
+    width: 60vw;
+    height: 35px;
+    text-align: left;
+}
+
+#backButton {
+    background-color: aqua;
+    position: fixed;
+    bottom: 20px;         
+    right: 20px;           
+    z-index: 1000;
+    padding: 8px 16px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;   
+}
+
+.card-heading {
+  text-align: center;
+  border-color: gray;
+  box-shadow: 2px 2px 5px black;
+  font-weight: bold;
+  font-family: "Bree Serif";
+  padding: 5px;
+}
+
+.sub-heading{
+    font-family: 'Bree Serif';
+    font-size: 23px;
+    font-weight: bold;
+    color: #333333;
+    text-decoration: underline;
+
+}
+
+.card-details{
+  font-family: "Open Sans", sans-serif;
+  font-size: 18px;
+  color: #333333;
+  padding: 10px;
+  margin: 5px;
+  border-style: solid;
+  border-color: #adb5bde6;
+  box-shadow: #333333 2px 2px 5px;
+  height: 300px;
+}

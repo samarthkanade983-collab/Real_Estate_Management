@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Properties{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="card-heading text-center mb-4">Properties</h2>
+
+    {% for property in properties %}
+    <div class="card mb-4 shadow-sm border-0 rounded-4 
+                {% if property.status in ['verified', 'approved'] %}border-success{% endif %}" 
+         style="position: relative;">
+        
+        <!-- Ribbon for Verified / Approved -->
+        {% if property.status == 'verified' %}
+        <div style="position: absolute; top: 0; left: 0; background-color: #17a2b8; color: white; padding: 0.25rem 0.75rem; font-size: 0.8rem; border-top-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem;">
+            Verified
+        </div>
+        {% elif property.status == 'approved' %}
+        <div style="position: absolute; top: 0; left: 0; background-color: #28a745; color: white; padding: 0.25rem 0.75rem; font-size: 0.8rem; border-top-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem;">
+            Approved
+        </div>
+        {% endif %}
+
+        <div class="row g-0 align-items-center">
+
+            <!-- Image -->
+            <div class="col-md-4 text-center p-3">
+                <img src="{{ url_for('static', filename='uploads/' ~ property.thumbnail) if property.thumbnail else url_for('static', filename='default.jpg') }}"
+                     class="img-fluid rounded-3"
+                     style="max-height: 200px; object-fit: cover; width: 100%;">
+            </div>
+
+            <!-- Details -->
+            <div class="col-md-8">
+                <div class="card-body">
+
+                    <h4 class="fw-bold mb-2">{{ property.title }}</h4>
+                    <p class="mb-1"><strong>Price:</strong> ₹{{ property.price }}</p>
+                    <p class="mb-2"><strong>Location:</strong> {{ property.location }}</p>
+
+                    <!-- Status Badge -->
+                    <p class="mb-3"><strong>Status:</strong>
+                        {% if property.status == "pending" %}
+                            <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
+                        {% elif property.status == "verified" %}
+                            <span class="badge bg-info px-3 py-2">Verified</span>
+                        {% elif property.status == "approved" %}
+                            <span class="badge bg-success px-3 py-2">Approved</span>
+                        {% elif property.status == "rejected" %}
+                            <span class="badge bg-danger px-3 py-2">Rejected</span>
+                        {% endif %}
+                    </p>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2">
+                        {% if property.status == "verified" %}
+                            <a href="{{ url_for('approve_property', property_id=property.id) }}"
+                               class="btn btn-success btn-sm px-3">Approve</a>
+                        {% endif %}
+
+                        <form action="{{ url_for('admin_delete_property', property_id=property.id) }}"
+                              method="POST" class="d-inline">
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm px-3"
+                                    onclick="return confirm('Are you sure you want to delete this property?')">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% else %}
+        <div class="alert alert-warning">
+            No verified or approved properties to display.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

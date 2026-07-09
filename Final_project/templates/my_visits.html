@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}My Visits{% endblock %}
+
+{% block body %}
+
+<h2 class="card-heading mb-4">My Scheduled Visits</h2>
+
+{% if visits %}
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Property</th>
+                {% if session.get('role') == 'agent' %}
+                <th>Scheduled By</th>
+                <th>Number</th>
+                {% elif session.get('role') == 'user' %}
+                <th>Agent</th>
+                <th>Number</th>
+                {% endif %}
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visit in visits %}
+            <tr>
+                <td>{{ visit.property.title }}</td>
+
+                {% if session.get('role') == 'agent' %}
+                <td>{{ visit.scheduled_user.name if visit.scheduled_user else 'Unknown' }}</td>
+                <td>{{ visit.scheduled_user.number if visit.scheduled_user else '-' }}</td>
+                {% elif session.get('role') == 'user' %}
+                <td>{{ visit.agent.name if visit.agent else 'Not assigned' }}</td>
+                <td>{{ visit.agent.phone if visit.agent else '-' }}</td>
+                {% endif %}
+
+                <td>{{ visit.visit_date.strftime("%Y-%m-%d") }}</td>
+                <td>{{ visit.visit_time.strftime("%H:%M") }}</td>
+                <td>
+                    {% if visit.status == "scheduled" %}
+                    <span class="badge bg-primary">Scheduled</span>
+                    {% elif visit.status == "cancelled" %}
+                    <span class="badge bg-danger">Cancelled</span>
+                    {% elif visit.status == "approved" %}
+                    <span class="badge bg-success">Approved</span>
+                    {% elif visit.status == "done" %}
+                    <span class="badge bg-secondary">Done</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if visit.status == "scheduled" or visit.status == "approved" %}
+
+                    {% if session.get('role') == 'agent' %}
+                    <form action="{{ url_for('mark_visit_done', visit_id=visit.id) }}" method="POST"
+                        style="display:inline;">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            Mark Done
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if session.get('role') == 'user' %}
+                    <a href="{{ url_for('reschedule_visit', visit_id=visit.id) }}" class="btn btn-warning btn-sm">
+                        Reschedule
+                    </a>
+                    {% endif %}
+
+                    <form action="{{ url_for('cancel_visit', visit_id=visit.id) }}" method="POST"
+                        style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Cancel
+                        </button>
+                    </form>
+
+                    {% elif visit.status == "done" %}
+                    <button class="btn btn-success btn-sm" disabled>
+                        ✔ Completed
+                    </button>
+
+                    {% else %}
+                    <span class="text-muted">Cancelled</span>
+                    {% endif %}
+                    </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-warning">
+    No visits scheduled yet.
+</div>
+{% endif %}
+
+{% endblock %}

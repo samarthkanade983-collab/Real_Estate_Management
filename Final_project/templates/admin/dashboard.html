@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+
+    <h2 class="card-heading mb-4 fw-bold">Admin Dashboard</h2>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Total Users</h5>
+                <h3 class="fw-bold">{{ total_users }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Total Properties</h5>
+                <h3 class="fw-bold">{{ total_properties }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Total Agents</h5>
+                <h3 class="fw-bold">{{ total_agents }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Completed Deals</h5>
+                <h3 class="fw-bold">{{ total_completed_deals }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Ongoing Projects</h5>
+                <h3 class="fw-bold">{{ ongoing_properties }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Pending Verifications</h5>
+                <h3 class="fw-bold">{{ pending_verifications }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Properties Table -->
+    <h4 class="sub-heading text-center mb-3">All Properties</h4>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Owner</th>
+                    <th>Price</th>
+                    <th>Verified By</th>
+                    <th>Ongoing</th>
+                    <th>Carousel</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% if properties %}
+
+                {% for prop in properties %}
+                {% if prop.status not in ["sold", "rented"] %}
+
+                <tr>
+
+                    <td>{{ prop.id }}</td>
+
+                    <td class="fw-semibold">
+                        {{ prop.title }}
+                    </td>
+
+                    <td>
+                        {{ prop.user.email if prop.user else '-' }}
+                    </td>
+
+                    <td>
+                        ₹{{ prop.price }}
+                    </td>
+
+                    <td>
+                        {{ prop.verified_by or '-' }}
+                    </td>
+
+                    <td>
+                        {% if prop.is_ongoing %}
+                        <span class="badge bg-success">Yes</span>
+                        {% else %}
+                        <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if prop.show_in_carousel %}
+                        <span class="badge bg-primary">Visible</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Hidden</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if prop.status == "approved" %}
+                        <span class="badge bg-success">Approved</span>
+                        {% elif prop.status == "pending" %}
+                        <span class="badge bg-secondary">Pending</span>
+                        {% else %}
+                        <span class="badge bg-info">{{ prop.status }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <form action="{{ url_for('toggle_ongoing', property_id=prop.id) }}" method="POST">
+                                <button type="submit"
+                                    class="btn btn-sm {% if prop.is_ongoing %}btn-success{% else %}btn-outline-success{% endif %}">
+                                    Ongoing
+                                </button>
+                            </form>
+
+                            <form action="{{ url_for('toggle_carousel', property_id=prop.id) }}" method="POST">
+                                <button type="submit"
+                                    class="btn btn-sm {% if prop.show_in_carousel %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                    Carousel
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+
+                </tr>
+
+                {% endif %}
+                {% endfor %}
+
+                {% else %}
+
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        No properties available.
+                    </td>
+                </tr>
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+{% endblock %}

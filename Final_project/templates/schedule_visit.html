@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Schedule Visit{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3 text-center">
+                        Schedule Visit
+                    </h3>
+
+                    <p class="text-center text-muted">
+                        Property: <strong>{{ property.title }}</strong>
+                    </p>
+
+                    {% if session.get("role") == "agent" %}
+                        <div class="alert alert-info text-center">
+                            You are scheduling this visit as an Agent.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center">
+                            An available agent will be assigned automatically.
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+
+                        <!-- Date -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Select Date
+                            </label>
+                            <input type="date"
+                                   name="visit_date"
+                                   class="form-control w-100"
+                                   required>
+                        </div>
+
+                        <!-- Time -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Select Time
+                            </label>
+                            <input type="time"
+                                   name="visit_time"
+                                   class="form-control w-100"
+                                   required>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('property_details', property_id=property.id) }}"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary px-4">
+                                Schedule
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

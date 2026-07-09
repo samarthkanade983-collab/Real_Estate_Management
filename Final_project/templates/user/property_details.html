@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}{{ property.title }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+
+            <div class="card shadow border-0 rounded-4 overflow-hidden">
+
+                <!-- 🔹 Carousel -->
+                {% if property.images %}
+                <div id="carouselDetail" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+
+                        {% for img in property.images %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ url_for('static', filename='uploads/' ~ img.image) }}"
+                                 class="d-block w-100 carousel-image"
+                                 alt="Property Image">
+                        </div>
+                        {% endfor %}
+
+                    </div>
+
+                    {% if property.images|length > 1 %}
+                    <button class="carousel-control-prev" type="button"
+                            data-bs-target="#carouselDetail" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+
+                    <button class="carousel-control-next" type="button"
+                            data-bs-target="#carouselDetail" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <img src="{{ url_for('static', filename='uploads/default.jpg') }}"
+                     class="d-block w-100 carousel-image"
+                     alt="No image available">
+                {% endif %}
+
+                <!-- 🔹 Property Details -->
+                <div class="card-body p-4">
+
+                    <h3 class="fw-bold mb-3">{{ property.title }}</h3>
+
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-location-dot me-2"></i>
+                        {{ property.location }}
+                    </p>
+
+                    <h4 class="text-primary fw-bold mb-3">
+                        ₹{{ "{:,.0f}".format(property.price) }}
+                    </h4>
+
+                    <p class="mb-4">{{ property.description }}</p>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-3">
+
+                        {% if session.get("role") == "agent" %}
+                           <a href="{{ url_for('agent_schedule_visit', property_id=property.id) }}"
+                            class="btn btn-warning">
+                            Schedule Visit
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('user_schedule_visit', property_id=property.id) }}"
+                            class="btn btn-warning">
+                            Schedule Visit
+                            </a>
+                        {% endif %}
+
+
+                        <a onclick="window.history.back()"
+                           class="btn btn-outline-warning px-4">
+                            Back
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

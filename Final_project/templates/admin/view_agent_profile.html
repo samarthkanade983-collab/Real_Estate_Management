@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Agent Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Agent Profile</h2>
+
+    <div class="card mb-3" style="max-width: 600px;">
+        <div class="row g-0">
+            <div class="col-md-4 mt-auto mb-auto">
+                {% if agent.agent_profile_img %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ agent.agent_profile_img) }}"
+                     class="img-fluid rounded-start" alt="Profile Image">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default_profile.png') }}"
+                         class="img-fluid rounded-start" alt="Profile Image">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ agent.name }}</h5>
+                    <p class="card-text"><strong>Email:</strong> {{ agent.email }}</p>
+                    <p class="card-text"><strong>Phone:</strong> {{ agent.phone or 'N/A' }}</p>
+                    <p class="card-text"><strong>Gender:</strong> {{ agent.agent_gender or 'N/A' }}</p>
+                    <p class="card-text"><strong>Status:</strong> {{ agent.status }}</p>
+                    <p class="card-text"><strong>Department:</strong> {{ agent.department }}</p>
+                    <p class="card-text"><small class="text-muted">Joined {{ agent.created_at.strftime('%d %B %Y') }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a onclick="window.history.back()" class="btn btn-outline-warning">Back</a>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Scheduled Visits{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h3 class="card-heading text-center mb-4">Scheduled Visits</h3>
+
+    <table class="table table-bordered table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Property</th>
+                <th>Scheduled By</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visit in visits %}
+            <tr>
+                <td>{{ visit.property.title }}</td>
+                <td>
+                        {% if visit.user %}
+                        {{ visit.user.name }}
+                        {% elif visit.agent %}
+                        {{ visit.agent.name }}
+                        {% endif %}
+                </td>
+                <td>{{ visit.visit_date }}</td>
+                <td>{{ visit.visit_time }}</td>
+
+                <td>
+                    <span class="badge
+                        {% if visit.status == 'scheduled' %}
+                            bg-primary
+                        {% elif visit.status == 'done' %}
+                            bg-success
+                        {% elif visit.status == 'cancelled' %}
+                            bg-danger
+                        {% endif %}">
+                        {{ visit.status.capitalize() }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button onclick="window.history.back()" class="btn btn-outline-warning btn-sm">
+        Back
+    </button>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Agent Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+
+    <!-- Welcome Section -->
+    <div class="mb-4">
+        <h2>Welcome, {{ agent.name }} 👋</h2>
+        <p class="text-muted">
+            Member since {{ agent.created_at.strftime('%d %B %Y') }}
+        </p>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-2x text-info mb-2"></i>
+                    <h5 class="card-title">Department</h5>
+                    <h3>{{ agent.department }}</h3>
+                </div>
+            </div>
+        </div>
+        {% if agent.department == "Broker" %}
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-home fa-2x text-primary mb-2"></i>
+                    <h5 class="card-title">Pending Verifications</h5>
+                    <h3>{{ pending_count or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check fa-2x text-success mb-2"></i>
+                    <h5 class="card-title">Scheduled Visits</h5>
+                    <h3>{{ visit_count or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-warning mb-2"></i>
+                    <h5 class="card-title">Verified Properties</h5>
+                    <h3>{{ verified_count or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        <!-- Pending Properties Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Properties Awaiting Verification</h5>
+            </div>
+            <div class="card-body">
+
+                {% if pending_properties %}
+                <div class="list-group">
+                    {% for property in pending_properties %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ property.title }}</strong><br>
+                            <small class="text-muted">{{ property.location }}</small>
+                        </div>
+                        <a href="{{ url_for('agent_view_property', property_id=property.id) }}"
+                            class="btn btn-secondary btn-sm">View</a>
+                        <a href="{{ url_for('agent_verify_property', property_id=property.id) }}"
+                            class="btn btn-sm btn-success"> Verify</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No properties pending verification.</p>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- Visit Section -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Upcoming Property Visits</h5>
+            </div>
+            <div class="card-body">
+
+                {% if visits %}
+                <ul class="list-group">
+                    {% for visit in visits %}
+                    <li class="list-group-item">
+                        <strong>{{ visit.property.title }}</strong><br>
+                        <small>
+                            Date: {{ visit.visit_date.strftime('%d %B %Y') }} |
+                            User: {{ visit.scheduled_by.name }}
+                        </small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No scheduled visits.</p>
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% elif agent.department == "Sales" %}
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                    <h5 class="card-title">Active Deals</h5>
+                    <h3>{{ active_deals or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <h5 class="card-title">Completed Deals</h5>
+                    <h3>{{ completed_deals or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="fas fa-rupee-sign fa-2x text-warning mb-2"></i>
+                    <h5 class="card-title">Total Deal Value</h5>
+                    <h3>₹{{ total_sales or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+    {% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Reschedule Visit{% endblock %}
+
+{% block body %}
+<h2>Reschedule Visit for {{ visit.property.title }}</h2>
+
+<form method="POST" class="mt-4">
+    <div class="mb-3">
+        <label for="visit_date" class="form-label">New Date</label>
+        <input type="date" class="form-control" id="visit_date" name="visit_date" 
+               value="{{ visit.visit_date }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="visit_time" class="form-label">New Time</label>
+        <input type="time" class="form-control" id="visit_time" name="visit_time" 
+               value="{{ visit.visit_time }}" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Reschedule</button>
+    <a href="{{ url_for('my_visits') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

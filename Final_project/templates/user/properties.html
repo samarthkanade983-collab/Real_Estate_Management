@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}User Properties{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+
+            <h2 class="card-heading text-center mb-4">Properties</h2>
+            <form method="GET" action="{{ url_for('all_properties') }}"
+                class="card card-filter border-0 rounded-4 p-4 mb-4">
+
+                <!-- 🔹 Row 1 : Search + Location -->
+                <div class="row g-4 mb-3 align-items-end justify-content-center">
+
+                    <!-- Search -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control border-start-0"
+                                placeholder="Property title..." value="{{ request.args.get('search', '') }}">
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="fas fa-location-dot text-muted"></i>
+                            </span>
+                            <input type="text" name="location" class="form-control border-start-0"
+                                placeholder="Enter city or area" value="{{ request.args.get('location', '') }}">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 🔹 Row 2 : Price Filters -->
+                <div class="row g-4 align-items-end">
+
+                    <!-- Min Price -->
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold">Min Price</label>
+                        <input type="number" name="min_price" class="form-control price-box" placeholder="₹ 0"
+                            step="1000" min="0"
+                            value="{{ request.args.get('min_price', '') }}">
+                    </div>
+
+                    <!-- Max Price -->
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold">Max Price</label>
+                        <input type="number" name="max_price" class="form-control price-box" placeholder="₹ 10,00,000"
+                            step="10000" min="0"
+                            value="{{ request.args.get('max_price', '') }}">
+                    </div>
+
+                    <!--Property Type-->
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold">Property Type</label>
+                        <select name="property_type" class="form-select value-box w-75">
+                            <option value="">Select Type</option>
+                            <option value="Rental" {% if request.args.get('property_type')=='Rental' %}selected{% endif
+                                %}>
+                                Rental
+                            </option>
+                            <option value="Sale" {% if request.args.get('property_type')=='Sale' %}selected{% endif %}>
+                                Sale
+                            </option>
+                        </select>
+                    </div>
+                    <!-- Button -->
+                    <div class="col-md-4 d-grid">
+                        <button type="submit" class="btn btn-primary rounded-3">
+                            <i class="fas fa-filter me-1"></i> Apply Filters
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Clear Filters -->
+                <div class="text-end mt-3">
+                    <a href="{{ url_for('all_properties') }}" class="text-decoration-underline small text-muted">
+                        Clear Filters
+                    </a>
+                </div>
+
+            </form>
+
+
+            {% if properties %}
+            {% for property in properties %}
+            <div class="card mb-4 shadow-sm">
+                <div class="row g-0">
+                    <!-- Thumbnail Image -->
+                    <div class="col-md-4">
+                        <img src="{{ url_for('static', filename='uploads/' ~ property.thumbnail) }}"
+                            class="img-fluid rounded-start h-100" alt="Property Image">
+                    </div>
+
+                    <!-- Property Details -->
+                    <div class="col-md-8">
+                        <div class="card-details p-3 d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title">{{ property.title }}</h5>
+                                <p class="card-text">{{ property.description|truncate(100) }}</p>
+                                <p><strong>Price:</strong> ₹{{ property.price }}</p>
+                                <p><strong>Location:</strong> {{ property.location }}</p>
+
+                                <a href="{{ url_for('property_details', property_id=property.id) }}"
+                                    class="btn btn-primary btn-sm">
+                                    View Details
+                                </a>
+                            </div>
+
+                            <!-- Wishlist Button -->
+                            <form action="{{ url_for('add_to_wishlist', property_id=property.id) }}" method="post"
+                                class="d-inline ms-3">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-center text-muted">No properties available.</p>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My Wishlist{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="card-heading mb-4">My Wishlist <i class="fas fa-heart text-danger"></i></h2>
+
+    {% if properties %}
+    {% for property in properties %}
+    <div class="card mb-4 shadow-sm">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename='uploads/' ~ property.thumbnail) }}"
+                    class="img-fluid rounded-start" alt="Property Image">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body p-3">
+                    <h5 class="card-title">{{ property.title }}</h5>
+                    <p class="card-text">{{ property.description|truncate(100) }}</p>
+                    <p><strong>Price:</strong> ₹{{ property.price }}</p>
+                    <p><strong>Location:</strong> {{ property.location }}</p>
+
+                    <form action="{{ url_for('remove_from_wishlist', property_id=property.id) }}" method="post"
+                        class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </form>
+
+                    <a href="{{ url_for('property_details', property_id=property.id) }}"
+                        class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="text-center text-muted">Your wishlist is empty.</p>
+    {% endif %}
+    <a onclick="window.history.back()" class="btn btn-outline-warning ms-2">
+        Back
+    </a>
+</div>
+{% endblock %}

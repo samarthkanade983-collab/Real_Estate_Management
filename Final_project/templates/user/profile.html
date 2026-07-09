@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock title %}
+
+{% block body %}
+
+<!-- ================= PROFILE VIEW ================= -->
+<div id="section-profile">
+    <div class="card mx-auto mt-4" style="max-width: 600px;">
+        <div class="card-header">
+            <h3 class="main-heading">User Profile</h3>
+        </div>
+
+        <div class="card-img text-center">
+            {% if user.profile_img %}
+            <img src="{{ url_for('static', filename='uploads/' ~ user.profile_img) }}" class="rounded-circle"
+                width="170" height="170">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/default-user.png') }}" class="rounded-circle" width="150"
+                height="150">
+            {% endif %}
+        </div>
+
+        <div class="card-body">
+            <p><strong>Name:</strong> {{ user.name }}</p>
+            <p><strong>Mobile:</strong> {{ user.number }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Address:</strong> {{ user.address }}</p>
+            <p><strong>Gender:</strong> {{ user.gender }}</p>
+        </div>
+
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-danger" onclick="showEdit()">
+                Edit Profile
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= EDIT PROFILE ================= -->
+<div id="section-editProfile" style="display:none;">
+    <div class="card mx-auto mt-4" style="max-width: 600px;">
+        <div class="card-header">
+            <h5>Edit Profile</h5>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+
+                <div class="mb-2">
+                    <label>Name</label>
+                    <input type="text" name="name" class="value-box form-control" value="{{ user.name }}">
+                </div>
+
+                <div class="mb-2">
+                    <label>Mobile</label>
+                    <input type="text" name="number" class="value-box form-control" value="{{ user.number }}">
+                </div>
+
+                <div class="mb-2">
+                    <label>Address</label>
+                    <textarea name="address" class="value-box form-control">{{ user.address }}</textarea>
+                </div>
+
+                <div class="mb-2">
+                    <label>Gender</label>
+                    <select name="gender" class="value-box form-control">
+                        <option value="Male" {{ 'selected' if user.gender=='Male' else '' }}>Male</option>
+                        <option value="Female" {{ 'selected' if user.gender=='Female' else '' }}>Female</option>
+                        <option value="Other" {{ 'selected' if user.gender=='Other' else '' }}>Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label>Profile Image</label>
+                    <input type="file" name="profile_img" class="value-box form-control">
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary">Update Profile</button>
+                    <button type="button" class="btn btn-secondary ms-2" onclick="showProfile()">
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showEdit() {
+        document.getElementById("section-profile").style.display = "none";
+        document.getElementById("section-editProfile").style.display = "block";
+    }
+
+    function showProfile() {
+        document.getElementById("section-editProfile").style.display = "none";
+        document.getElementById("section-profile").style.display = "block";
+    }
+</script>
+
+{% endblock body %}
